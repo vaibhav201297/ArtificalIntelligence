@@ -1,6 +1,4 @@
 <h1> Assignment 1 </h1>
-<h3> Zack Seliger : zseliger </h2>
-<h3> Siddharth Tata : sitata </h3>
 <h3> Vaibhav Vishwanath : vavish </h3>
 
 <h4> Assignment 1 Part 1 </h4>
