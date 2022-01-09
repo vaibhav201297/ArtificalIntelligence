@@ -1,56 +1,83 @@
-# Assignment 2: Games and Bayesian Classifiers
+# Assignment 3: Probability and Statistical Learning
 
-### **Part 1 (Raichu-Vaibhav Vishwanath)** ###
-The game of Raichu is a 2 player game which comprises of 3 pieces each : a pichu, a pikachu and raichu. The pichu can move only diagonally or above another opponent piece thus eliminating it. Similarly, the Pikachu can move only vertically and horizontally and can capture opposition pichu and pikachu, A Raichu can move in any direction and can move any number of moves.
-For this problem, I have used minimax algorithm with alpha beta pruning . The successors for a current board involves searching all possible moves for the pieces we have remaining. SInce i am searching till depth 4, it will look at all successors at depth 4. 
-I have defined the rules for all pieces possible. 
-The minimax function has been adapted from the youtube video <a href='https://www.youtube.com/watch?v=l-hh51ncgDI'></a>.
-The summary of my code is as follows:
-<ul>
-	<li> First call the minimax  algorithm with the successors of the initial board state.</li>
-	<li> Then, the recursive implementation will look at all possible successors after choosing the first move</li>
-	<li> The evaluation or utility function involves subtracting the number of white pichus and black pichus, white pikachus and black pikachus and white raichus and black raichus when the white player is playing. The inverse is done when the player is black. </li>
-</ul>
-This assignment helped me understand minimax algorithm and how it is used in 2 player games. My game is performing very well but it is unable to defeat the the opponents raichu. I have tried hard to figure out why it is not choosing the move which can be used to eliminate the oppositon Raichu. It is always 
+## **Part 1 (Part-of-speech tagging - Vaibhav Vishwanath)** ##
+The problem is Parts of Speech Tagging. Given a sentence, the task is to predict the parts of speech for the sentence.
+We first train our model based on the training file in which the sentence along with the parts of speech is given.
 
-Attached is the output of the my code playing on Tank against Prof. David's AI.
-<img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a2/blob/master/part1/Tank_op.png' alt='Output Image'>
+In Model Training, we use the training file of corpus to generate 
+<ol>
+<li>Prior Probabilities : The probabilities of any word being a part of speech based on the total counts of corpus </li>
+<li> The Initial Part of Speech Distribution: The distribution of probabilities for different parts of speech being the first word in a sentence </li>
+<li> The Transition Probabilities : The transition from 1 part of speech to another based on the training data. We calculate 2 transitions : Speech1->Speech2 and Speech1->Speech3 </li>
+<li> The Emission Probablities : The probability of seeing a certain observed variable(Word) given certain value for hidden variable(Part of Speech)</li>
+</ol>
+
+We have to implement 3 methods 
+<ol><li> A Simple model : We just calculate the Part of Speech given the word based on just the current word </li>
+<li> Viterbi Algorithm for HMM : In this we calculate the Parts of Speech based on the current observed state and the next state by taking into account the transition probabilities</li>
+<li> A Complex MCMC using Gibbs Sampling : In this model, we consider the current state and the transition from the current to the next POS and the next-to-next POS. We use Gibbs sampling to generate samples of the POS distribution and then calculate the Posterior probabilties to get the most viable sample from distribution </li></ol>
+
+<h3> Difficulties Faced </h3>
+We have to take into consideration the scenario where the word in the testing data has not occured in the training data.<br/>
+We also have to consider transitions that don't take place between 2 POS such as a '.' to 'adj'. 
+<h4> References used </h4>
+This assignment was a particularly difficult one and hence i had to use multiple references to solve them. I've cited the references in the code as well.
+Link : <a href='https://github.com/sumeetmishra199189/Elements-of-AI/tree/master/Probability'>GitHub Repository</a><br/>
+Prof. David's viterbi_sol.py  - The code used in the in-class activity of Viterbi has been modified to work for 12 states instead of 2 <br/>
+I've also discussed strategy for solving the Gibbs Sampling code from my friend Shubhangi Mishra(shubmish). She helped me understand the working of Gibbs Sampling in this problem. 	
+## **Part 2 (Ice tracking - Amol Sangar)** ##
+- The problem is to trace two ice lines on the image using different approaches like Bayes net, HMM with Viterbi and human feedback.
+- The first technique is to use Bayes Net in its simplest form. Here we can see that the approach performs averagely and misses out many points on the edge. It can also be seen in some cases (like test image 23) that the edge points are dispersed all over the image and thus leads to non-uniform edge trace.
+- The second technique uses HMM with Viterbi algorithm which handles the drawback from above efficiently. The Viterbi algorithm helps in tweaking the transition probabilities and gives more weightage to edge points which are in vicinity of previous edge points. This leads in forming a uniform trace line and can be observed as well.
+- The final technique uses feedback points from a human. Since these points are assumed to be on the trace line, we can enhance the algorithm to only consider this feedback point on the column. Thus, this technique can use multiple such points to improve the final result. 
   
+  In human feedback, the edge strength in the points column except the mentioned point is reduced to zero in order to make the trace line pass through the feedback point only.
+  
+  **Emission and transition probabilities:**
+- The emission probabilities are calculated from the edge strength matrix where higher values mean an edge is present. The transition probabilities are calculated per pixel and looks for previous columns closest 15 pixels and assigns higher weightage to them. This leads to a uniform line tracing as mentioned earlier.
+    
+  ### **Output:** ###
+  
+  **Test Image 23**
+  
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_23/output_simple.jpg' alt='Output Simple'>
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_23/output_hmm.jpg' alt='Output Image'>
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_23/output_feedback.jpg' alt='Output Image'>
+  <br/>
+  Simple &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; HMM with Viterbi &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Human Feedback
+  
+  **Test Image 09**
+  
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_09/output_simple.jpg' alt='Output Simple'>
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_09/output_hmm.jpg' alt='Output HMM'>
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_09/output_feedback.jpg' alt='Output Human Feedback'>
+  <br/>
+  Simple &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; HMM with Viterbi &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Human Feedback
+  
+  **Test Image 16**
+  
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_16/output_simple.jpg' alt='Output Simple'>
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_16/output_hmm.jpg' alt='Output HMM'>
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_16/output_feedback.jpg' alt='Output Human Feedback'>
+  <br/>
+  Simple &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; HMM with Viterbi &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Human Feedback
+  
+  **Test Image 30**
+  
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_30/output_simple.jpg' alt='Output Simple'>
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_30/output_hmm.jpg' alt='Output HMM'>
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_30/output_feedback.jpg' alt='Output Human Feedback'>
+  <br/>
+  Simple &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; HMM with Viterbi &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Human Feedback
+  
+  **Test Image 31**
+  
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_31/output_simple.jpg' alt='Output Simple'>
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_31/output_hmm.jpg' alt='Output HMM'>
+  <img src='https://github.iu.edu/cs-b551-fa2021/abhmura-asangar-vavish-a3/blob/master/part2/output/image_31/output_feedback.jpg' alt='Output Human Feedback'>
+  <br/>
+  Simple &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; HMM with Viterbi &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Human Feedback
 
-### **Part 2 (The Game of Quintris-Abhijeet Sridhar M)** ###
-- The problem here to design an AI that can play the game of quintris. To solve this, we would first need to get all possible locations at which a current piece can be placed, then pick the best solution, and perform the move. 
-- By manually playing the game of quintris, I came up with a few good heuristics to measure on how good the board is. 
-- We first generate all possible places in which the current piece can go:
-  - We split this into 2 parts, checking all locations on the left, then all places on the right.
-  - For each column in which the piece can go, we compute all rotations and flips for the piece, execute the down command, and store the result.
-  - While going through each location, we keep storing temporary paths to append them to the final path.
-- On each of the possible board generated, we calcuate the heuristic, which is a weighted average of:
-  - Landing height - row number of the top left part of the current piece after putting it down
-  - number of lines completed after putting the piece.
-  - Transitions - Number of time in a row/column where the value changes from 'x' to ' ' - that is filled to empty or vice versa.
-  - Holes - Number of empty locations on the board on top which there is a filled location.
-  - Bad holes - Number of consecutive empty locations which have a top location filled and left and right of the top filled. (Empty location is blocked from above and side)
-- Implementing lookahead:
-  - After calculating the score of each of the possible locations of the piece, we pick the best 5 boards out of them.
-  - We again generate all possible locations on each of these top 5 boards, and calculate the scores.
-  - Finally, we execute the path that can produce the least score after considering the next piece as well.
-- There are 2 different ways in which the implementation is handled-
-  - In function minmax(), we make copies of the quintris and execute the moves left, right etc to generate future boards. In turn all further calculation and implementation is based on using a quintris object.
-  - In function get_best_path(), we just use the board and the piece and numerically compute all possible locations without executing the movement functions on the quintris, rather use given methdos in QuintrisGame.py to manipulate piece locations.
-  - On following this method, the AI was able to get a high score of 231.
-  - ![image](https://media.github.iu.edu/user/18478/files/3473b100-4019-11ec-88a9-96dd50b04f1d)
+
    
-### **Part 3 (Truth be Told - Amol Sangar)** ###
-- The problem is to classify multiple hotel reviews in two categories – Deceptive and Truthful. To solve this problem, the use of naïve bayes makes perfect sense as we can select the category based on the probability of each word in the corpus and multiplying them. 
-- The first step to perform is to clean the data into a list or dictionary of words excluding special characters and numbers and then converting to lowercase characters. Then, the task is to remove words which are quite common and doesn’t contribute much to the prediction of the classes. Examples of such stop words are if, an, the, that etc.
-- After data cleaning and splitting into words, the program calculates prior probability and likelihood terms. Prior probability is calculated by dividing numbers of reviews in one class by number of reviews in every other class. Example – P(Deceptive) = P(Deceptive) / P(Deceptive) + P(Truthful)
-
-- Next is to calculate likelihood term for each term i.e.,
-
-  - P(Word | Deceptive) = Number of times Word occurs in review + alpha / Total number of words in Deceptive + alpha * Total number of words in the vocabulary
-
-  Here, alpha is called as Laplace smoothing parameter and is used to handle the problem of zero probability.
-
-- The last step is to calculate posterior probability which is simply multiplying likelihood and prior probability. Using log, we can do the same multiplication as - log(A*B) = logA + logB.
-
-- Finally, the program cleans the input test reviews the same way as the training data and predicts the class output.
+## **Part 3 (Reading text - Abhijeet Sridhar M)** ##
